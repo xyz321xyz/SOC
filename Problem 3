@@ -1,0 +1,31 @@
+#include <iostream>
+#include <vector>
+using namespace std;
+int main()
+{
+    int reps;
+    cin >> reps;
+    while(reps>0)
+    {
+        int len, num;
+        cin >> len >> num;
+        string cells;
+        cin >> cells;
+        int ans =0;
+        int i=0;
+        while(i<len)
+        {
+            if(cells[i]=='W')
+            {
+                i++;
+            }
+            else 
+            {
+                ans++;
+                i = i + num;
+            }
+        }
+        cout << ans << endl;
+        reps--;
+    }
+}
