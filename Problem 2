@@ -1,0 +1,23 @@
+#include <iostream>
+using namespace std;
+
+int main()
+{
+    int reps=0;
+    cin >> reps;
+    while(reps>0)
+    {
+        int n, ans=0;
+        cin >> n;
+        while(n>0)
+        {
+            int a, b;
+            cin >> a >> b;
+            if(a>b) ans++;
+            n--;
+        }
+        cout << ans << endl;
+        reps--;
+    }
+
+}
