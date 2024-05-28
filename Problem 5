@@ -1,0 +1,32 @@
+#include <iostream>
+#include <vector>
+
+using namespace std;
+
+int main() {
+    
+    const long long int limit = 100000000;
+    vector<bool> sieve(limit + 1, true);
+
+    sieve[0] = sieve[1] = false; 
+
+    for (long long int x = 2; x * x <= limit; x++) {
+        if (sieve[x]) {
+            for (long long int u = x * x; u <= limit; u += x) {
+                sieve[u] = false;
+            }
+        }
+    }
+
+    long long int count = 0;
+    for (long long int p = 2; p <= limit; p++) {
+        if (sieve[p]) {
+            count++;
+            if (count % 100 == 1) {
+                cout << p << endl;
+            }
+        }
+    }
+
+    return 0;
+}
