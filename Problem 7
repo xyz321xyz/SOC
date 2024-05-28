@@ -1,0 +1,28 @@
+#include <iostream>
+#include <vector>
+#include <cmath>
+
+using namespace std;
+
+int Divisors(int x) {
+    int count = 0;
+    for (int i = 1; i <= sqrt(x); i++) {
+        if (x % i == 0) {
+            count += (i == x / i) ? 1 : 2;
+        }
+    }
+    return count;
+}
+
+int main()
+{
+    int t;
+    cin >> t;
+    while(t>0)
+    {
+        int a;
+        cin >> a;
+        cout << Divisors(a) << endl;
+        t--;
+    }
+}
