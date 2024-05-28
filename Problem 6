@@ -1,0 +1,24 @@
+#include <iostream>
+using namespace std;
+
+long long int exp(long int x, long int n, long long int m)
+{
+    if(n==0) return 1%m;
+    long long u = exp(x, n/2, m);
+    u = (u*u)%m;
+    if (n%2 == 1) u = (u*x)%m;
+    return u;
+}
+
+int main()
+{
+    int n;
+    cin >> n;
+    while(n>0)
+    {
+        long int a, b;
+        cin >> a >> b;
+        cout << exp(a, b, 1000000007) << endl;
+        n--;
+    }
+}
