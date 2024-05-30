@@ -1,0 +1,54 @@
+#include <iostream>
+#include <string>
+#include <vector>
+#include <cmath>
+
+using namespace std;
+
+vector<pair<long long, int>> primeFactorization(long long n) {
+    vector<pair<long long, int>> factors;
+
+    int count = 0;
+    while (n % 2 == 0) {
+        n /= 2;
+        count++;
+    }
+    if (count > 0) {
+        factors.push_back({2, count});
+    }
+
+    for (long long i = 3; i <= sqrt(n); i += 2) {
+        count = 0;
+        while (n % i == 0) {
+            n /= i;
+            count++;
+        }
+        if (count > 0) {
+            factors.push_back({i, count});
+        }
+    }
+
+    if (n > 2) {
+        factors.push_back({n, 1});
+    }
+
+    return factors;
+}
+
+int main() {
+    int t;
+    cin >> t;
+    while (t > 0) {
+        long long a;
+        cin >> a;
+        long long totient = 1;
+        vector<pair<long long, int>> factors = primeFactorization(a);
+        for (const auto& factor : factors) {
+            totient *= pow(factor.first, factor.second - 1) * (factor.first - 1);
+        }
+        cout << totient << endl;
+        t--;
+    }
+
+    return 0;
+}
