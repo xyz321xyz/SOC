@@ -1,0 +1,42 @@
+#include <iostream>
+#include <unordered_map>
+#include <vector>
+using namespace std;
+
+int main()
+{
+    long long n;
+    long long k;
+    cin >> n >> k;
+    vector<long long> nums(n);
+    for(int i=0; i<n; i++)
+    {
+        cin >> nums[i];
+    }
+
+    unordered_map<long long, long long> frequency;
+    long long count = 0;
+    long long distinctCount = 0;
+    long long left = 0;
+
+    for(long long right=0; right<n; right++){
+
+        if(frequency[nums[right]]==0){
+            distinctCount++;
+        }
+        frequency[nums[right]]++;
+
+        while(distinctCount>k){
+            frequency[nums[left]]--;
+            if(frequency[nums[left]]==0){
+                distinctCount--;
+            }
+            left++;
+        }
+
+            count += (right-left+1);
+    }
+
+    cout << count << endl;
+    return 0;
+}
