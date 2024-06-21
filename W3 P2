@@ -36,7 +36,7 @@ int main() {
             cin >> leaves[j];
         }
 
-        int swaps = 0;  // Initialize swaps as an integer
+        int swaps = 0;
         beauty(leaves, 0, n - 1, swaps);
         if (is_sorted(leaves.begin(), leaves.end())) {
             cout << swaps << endl;
