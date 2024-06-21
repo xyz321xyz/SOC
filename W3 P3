@@ -1,0 +1,48 @@
+#include <iostream>
+#include <algorithm>
+#include <vector>
+#include <unordered_map>
+
+using namespace std;
+
+void beauty(vector<int>& leaves, int start, int end, int& swaps) {
+    if (start >= end) return;
+
+    auto maxElementIter = max_element(leaves.begin() + start, leaves.begin() + end + 1);
+    int maxIndex = distance(leaves.begin(), maxElementIter);
+
+    auto minElementIter = min_element(leaves.begin() + start, leaves.begin() + end + 1);
+    int minIndex = distance(leaves.begin(), minElementIter);
+
+    int middle = (start + end + 1) / 2;
+
+    if (maxIndex < middle && minIndex >= middle) {
+        rotate(leaves.begin() + start, leaves.begin() + middle, leaves.begin() + end + 1);
+        swaps++;
+    }
+
+    beauty(leaves, start, middle - 1, swaps);
+    beauty(leaves, middle, end, swaps);
+}
+
+int main() {
+    int t;
+    cin >> t;
+    for (int i = 0; i < t; i++) {
+        int n;
+        cin >> n;
+        vector<int> leaves(n);
+        for (int j = 0; j < n; j++) {
+            cin >> leaves[j];
+        }
+
+        int swaps = 0;  // Initialize swaps as an integer
+        beauty(leaves, 0, n - 1, swaps);
+        if (is_sorted(leaves.begin(), leaves.end())) {
+            cout << swaps << endl;
+        } else {
+            cout << -1 << endl;
+        }
+    }
+    return 0;
+}
