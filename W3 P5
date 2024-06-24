@@ -1,0 +1,36 @@
+#include <iostream>
+#include <vector>
+#include <algorithm>
+#include <cmath>
+#include <string> 
+
+using namespace std;
+
+bool equivalent(const string& a, int start_a, int end_a, const string& b, int start_b, int end_b) {
+    if (start_a == end_a && start_b == end_b) {
+        return a[start_a] == b[start_b];
+    }
+
+    int mid_a = start_a + (end_a - start_a + 1) / 2;
+    int mid_b = start_b + (end_b - start_b + 1) / 2;
+
+    bool straight = equivalent(a, start_a, mid_a - 1, b, start_b, mid_b - 1) && equivalent(a, mid_a, end_a, b, mid_b, end_b);
+    bool cross = equivalent(a, mid_a, end_a, b, start_b, mid_b - 1) && equivalent(a, start_a, mid_a - 1, b, mid_b, end_b);
+    return straight || cross;
+}
+
+int main() {
+    string a;
+    string b;
+    cin >> a;
+    cin >> b;
+
+    int n = a.size();
+    if (equivalent(a, 0, n - 1, b, 0, n - 1)) {
+        cout << "YES" << endl;
+    } else {
+        cout << "NO" << endl;
+    }
+
+    return 0;
+}
