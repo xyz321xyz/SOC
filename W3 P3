@@ -1,0 +1,35 @@
+#include <iostream>
+#include <algorithm>
+#include <vector>
+#include <string>
+ 
+using namespace std;
+ 
+long long calc(long long l, long long r, char c, const string& s) {
+    if (l == r) {
+        return s[l] != c ? 1 : 0;
+    }
+ 
+    long long mid = l + (r - l + 1) / 2;
+    long long left_count = count(s.begin() + l, s.begin() + mid, c);
+    long long right_count = count(s.begin() + mid, s.begin() + r + 1, c);
+ 
+    long long cost_l = (mid - l - left_count) + calc(mid, r, c + 1, s);
+    long long cost_r = (r - mid + 1 - right_count) + calc(l, mid - 1, c + 1, s);
+ 
+    return min(cost_l, cost_r);
+}
+ 
+int main() {
+    long long t;
+    cin >> t;
+    for (long long i = 0; i < t; i++) {
+        long long n;
+        cin >> n;
+        string s;
+        cin >> s;
+        long long result = calc(0, n - 1, 'a', s);
+        cout << result << endl;
+    }
+    return 0;
+}
