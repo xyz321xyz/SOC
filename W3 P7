@@ -1,0 +1,122 @@
+#include <iostream>
+#include <vector>
+#include <queue>
+#include <tuple>
+#include <cstring>
+#include <climits> 
+ 
+using namespace std;
+ 
+struct State {
+    int x, y, spikes;
+};
+ 
+bool isValid(int x, int y, int n, int m, vector<string>& maze) {
+    return x >= 0 && x < n && y >= 0 && y < m && maze[x][y] != '#';
+}
+ 
+bool bfsToTreasure(vector<string>& maze, int n, int m, int startX, int startY, int& treasureX, int& treasureY, int& totalSpikesToTreasure) {
+    int directions[4][2] = {{-1, 0}, {1, 0}, {0, -1}, {0, 1}};
+    queue<State> q;
+    vector<vector<vector<bool>>> visited(n, vector<vector<bool>>(m, vector<bool>(21, false)));
+ 
+    q.push({startX, startY, 0});
+    visited[startX][startY][0] = true;
+ 
+    while (!q.empty()) {
+        State current = q.front();
+        q.pop();
+ 
+        if (maze[current.x][current.y] == 'x') {
+            treasureX = current.x;
+            treasureY = current.y;
+            totalSpikesToTreasure = current.spikes;
+            return true;
+        }
+ 
+        for (int i = 0; i < 4; ++i) {
+            int nx = current.x + directions[i][0];
+            int ny = current.y + directions[i][1];
+            if (isValid(nx, ny, n, m, maze)) {
+                int newSpikes = current.spikes + (maze[nx][ny] == 's' ? 1 : 0);
+                if (newSpikes <= 20 && !visited[nx][ny][newSpikes]) {
+                    visited[nx][ny][newSpikes] = true;
+                    q.push({nx, ny, newSpikes});
+                }
+            }
+        }
+    }
+ 
+    return false;
+}
+ 
+
+bool bfsToExit(vector<string>& maze, int n, int m, int treasureX, int treasureY, int j) {
+    int directions[4][2] = {{-1, 0}, {1, 0}, {0, -1}, {0, 1}};
+    queue<State> q;
+    vector<vector<vector<bool>>> visited(n, vector<vector<bool>>(m, vector<bool>(21, false)));
+ 
+    q.push({treasureX, treasureY, 0});
+    visited[treasureX][treasureY][0] = true;
+ 
+    while (!q.empty()) {
+        State current = q.front();
+        q.pop();
+ 
+        if (maze[current.x][current.y] == '@') {
+           
+            if (current.spikes <= j) {
+                return true;
+            }
+            continue; 
+        }
+ 
+        for (int i = 0; i < 4; ++i) {
+            int nx = current.x + directions[i][0];
+            int ny = current.y + directions[i][1];
+            if (isValid(nx, ny, n, m, maze)) {
+                int newSpikes = current.spikes + (maze[nx][ny] == 's' ? 1 : 0);
+                if (newSpikes <= 20 && !visited[nx][ny][newSpikes]) {
+                    visited[nx][ny][newSpikes] = true;
+                    q.push({nx, ny, newSpikes});
+                }
+            }
+        }
+    }
+ 
+    return false;
+}
+ 
+int main() {
+    int n, m, j;
+    cin >> n >> m >> j;
+    vector<string> maze(n);
+    int startX = -1, startY = -1;
+ 
+    for (int i = 0; i < n; ++i) {
+        cin >> maze[i];
+        for (int k = 0; k < m; ++k) {
+            if (maze[i][k] == '@') {
+                startX = i;
+                startY = k;
+            }
+        }
+    }
+ 
+    int treasureX, treasureY, totalSpikesToTreasure = 0;
+ 
+    // Find the treasure 'x' and calculate total spikes to reach it
+    if (!bfsToTreasure(maze, n, m, startX, startY, treasureX, treasureY, totalSpikesToTreasure)) {
+        cout << "IMPOSSIBLE" << endl;
+        return 0;
+    }
+ 
+    if (bfsToExit(maze, n, m, treasureX, treasureY, j - totalSpikesToTreasure)) {
+        cout << "SUCCESS" << endl;
+    } else {
+        cout << "IMPOSSIBLE" << endl;
+    }
+ 
+    return 0;
+}
+ 
