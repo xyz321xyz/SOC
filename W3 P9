@@ -1,0 +1,70 @@
+#include <iostream>
+#include <vector>
+#include <queue>
+#include <cstring> 
+#include <climits> 
+
+using namespace std;
+
+typedef long long int ll;
+
+vector<ll> adjacent_list[2001];
+ll cities;
+
+bool cycle(ll start, ll &result)
+{
+    bool visit[cities+1];
+    ll p[cities+1];
+    memset(visit, false, sizeof(visit));
+    memset(p, -1, sizeof(p));
+    visit[start] = true;
+    queue<ll> q;
+    q.push(start);
+    while (!q.empty()) {
+        ll v = q.front();
+        q.pop();
+        for (ll u : adjacent_list[v]) {
+            if (!visit[u]) {
+                q.push(u);
+                visit[u] = true;
+                p[u] = v;
+            } else if (u == start) {
+                vector<ll> path;
+                for (int i = v; i != -1; i = p[i]) {
+                    path.push_back(i);
+                }
+                result = path.size();
+                return true;
+            }
+        }
+    }
+    return false;
+}
+
+int main() {
+    ios_base::sync_with_stdio(false);
+    cin.tie(0);
+    cout.tie(0);
+
+    cin >> cities;
+    ll a[cities+1][cities+1];
+    for (int i = 1; i <= cities; i++) {
+        for (int j = 1; j <= cities; j++) {
+            cin >> a[i][j];
+            if (a[i][j]) {
+                adjacent_list[i].push_back(j);
+            }
+        }
+    }
+
+    for (ll i = 1; i <= cities; i++) {
+        ll result = INT_MAX;
+        if (!cycle(i, result)) {
+            cout << "NO WAY\n";
+        } else {
+            cout << result << "\n";
+        }
+    }
+
+    return 0;
+}
