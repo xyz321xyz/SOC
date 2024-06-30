@@ -1,0 +1,110 @@
+#include <iostream>
+#include <vector>
+#include <queue>
+#include <algorithm>
+#include <climits> 
+
+using namespace std;
+
+struct Cell {
+    int x, y, time;
+};
+
+int main() {
+    int n, m;
+    cin >> n >> m;
+    vector<string> labyrinth(n);
+    for (int i = 0; i < n; ++i) {
+        cin >> labyrinth[i];
+    }
+
+    vector<vector<int>> monsterTime(n, vector<int>(m, INT_MAX));
+    queue<Cell> q;
+    pair<int, int> start;
+    
+    for (int i = 0; i < n; ++i) {
+        for (int j = 0; j < m; ++j) {
+            if (labyrinth[i][j] == 'A') {
+                start = {i, j};
+            } else if (labyrinth[i][j] == 'M') {
+                q.push({i, j, 0});
+                monsterTime[i][j] = 0;
+            }
+        }
+    }
+
+    int dx[] = {-1, 1, 0, 0};
+    int dy[] = {0, 0, -1, 1};
+    while (!q.empty()) {
+        Cell cur = q.front();
+        q.pop();
+        for (int k = 0; k < 4; ++k) {
+            int nx = cur.x + dx[k];
+            int ny = cur.y + dy[k];
+            if (nx >= 0 && nx < n && ny >= 0 && ny < m && labyrinth[nx][ny] == '.' && cur.time + 1 < monsterTime[nx][ny]) {
+                monsterTime[nx][ny] = cur.time + 1;
+                q.push({nx, ny, cur.time + 1});
+            }
+        }
+    }
+
+
+    if ((n == 1 && m == 1 && labyrinth[0][0] == 'A') || start.first == 0 || start.second == 0 || start.first == n - 1 || start.second == m - 1) {
+        cout << "YES" << endl;
+        cout << "0" << endl;
+        return 0;
+    }
+
+    queue<Cell> playerQueue;
+    vector<vector<int>> playerTime(n, vector<int>(m, INT_MAX));
+    vector<vector<pair<int, int>>> parent(n, vector<pair<int, int>>(m, {-1, -1}));
+
+    playerQueue.push({start.first, start.second, 0});
+    playerTime[start.first][start.second] = 0;
+
+    bool escaped = false;
+    pair<int, int> endPos;
+
+    while (!playerQueue.empty() && !escaped) {
+        Cell cur = playerQueue.front();
+        playerQueue.pop();
+        for (int k = 0; k < 4; ++k) {
+            int nx = cur.x + dx[k];
+            int ny = cur.y + dy[k];
+            if (nx >= 0 && nx < n && ny >= 0 && ny < m && labyrinth[nx][ny] == '.' && cur.time + 1 < playerTime[nx][ny] && cur.time + 1 < monsterTime[nx][ny]) {
+                playerTime[nx][ny] = cur.time + 1;
+                parent[nx][ny] = {cur.x, cur.y};
+                playerQueue.push({nx, ny, cur.time + 1});
+                if (nx == 0 || ny == 0 || nx == n - 1 || ny == m - 1) {
+                    escaped = true;
+                    endPos = {nx, ny};
+                    break;
+                }
+            }
+        }
+    }
+
+    if (escaped) {
+        cout << "YES" << endl;
+        vector<char> path;
+        pair<int, int> pos = endPos;
+        while (pos != start) {
+            pair<int, int> prev = parent[pos.first][pos.second];
+            if (prev.first == pos.first - 1) path.push_back('D');
+            else if (prev.first == pos.first + 1) path.push_back('U');
+            else if (prev.second == pos.second - 1) path.push_back('R');
+            else if (prev.second == pos.second + 1) path.push_back('L');
+            pos = prev;
+        }
+        reverse(path.begin(), path.end());
+        cout << path.size() << endl;
+        for (char c : path) cout << c;
+        cout << endl;
+    } else {
+        cout << "NO" << endl;
+    }
+
+    return 0;
+}
+
+
