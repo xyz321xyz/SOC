@@ -1,0 +1,73 @@
+#include <iostream>
+#include <vector>
+#include <limits>
+#include <algorithm>
+using namespace std;
+
+struct Edge {
+    int from, to, cost;
+};
+
+const long long INF = numeric_limits<long long>::max();
+
+bool find_negative_cycle(int n, const vector<Edge>& edges) {
+    vector<long long> dist(n, INF);
+    vector<int> parent(n, -1);
+    int cycle_start = -1;
+
+    for (int start_node = 0; start_node < n; ++start_node) {
+        dist[start_node] = 0;
+        for (int i = 0; i < n; ++i) {
+            cycle_start = -1;
+            for (const Edge& edge : edges) {
+                if (dist[edge.from] < INF && dist[edge.from] + edge.cost < dist[edge.to]) {
+                    dist[edge.to] = dist[edge.from] + edge.cost;
+                    parent[edge.to] = edge.from;
+                    cycle_start = edge.to;
+                }
+            }
+        }
+        if (cycle_start != -1) {
+            break;
+        }
+    }
+
+    if (cycle_start == -1) {
+        cout << "NO" << endl;
+        return false;
+    } else {
+        for (int i = 0; i < n; ++i) {
+            cycle_start = parent[cycle_start];
+        }
+
+        vector<int> cycle;
+        for (int v = cycle_start;; v = parent[v]) {
+            cycle.push_back(v);
+            if (v == cycle_start && cycle.size() > 1) break;
+        }
+        reverse(cycle.begin(), cycle.end());
+
+        cout << "YES" << endl;
+        for (int v : cycle) {
+            cout << v + 1 << " ";
+        }
+        cout << endl;
+        return true;
+    }
+}
+
+int main() {
+    int n, m;
+    cin >> n >> m;
+    vector<Edge> edges(m);
+
+    for (int i = 0; i < m; ++i) {
+        cin >> edges[i].from >> edges[i].to >> edges[i].cost;
+        edges[i].from--;
+        edges[i].to--;
+    }
+
+    find_negative_cycle(n, edges);
+
+    return 0;
+}
