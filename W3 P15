@@ -1,0 +1,90 @@
+#include <iostream>
+#include <vector>
+#include <stack>
+using namespace std;
+
+class Graph {
+    long long V;
+    vector<vector<long long>> adjList;
+
+public:
+    Graph(long long V);
+    void addEdge(long long v, long long w);
+    bool DFS(long long start, vector<long long>& parent, vector<long long>& cycle);
+};
+
+Graph::Graph(long long V) {
+    this->V = V;
+    adjList.resize(V + 1);
+}
+
+void Graph::addEdge(long long v, long long w) {
+    adjList[v].push_back(w);
+}
+
+bool Graph::DFS(long long start, vector<long long>& parent, vector<long long>& cycle) {
+    stack<long long> stack;
+    stack.push(start);
+
+    vector<bool> visited(V + 1, false);
+    visited[start] = true;
+
+    while (!stack.empty()) {
+        long long v = stack.top();
+        stack.pop();
+        visited[v] = true;
+
+        for (long long u : adjList[v]) {
+            if (!visited[u]) {
+                stack.push(u);
+                parent[u] = v;
+            } else {
+                cycle.push_back(u);
+                long long cur = v;
+                while (cur != u) {
+                    cycle.push_back(cur);
+                    cur = parent[cur];
+                }
+                cycle.push_back(u);
+                return true;
+            }
+        }
+    }
+    return false;
+}
+
+int main() {
+    long long n, m;
+    cin >> n >> m;
+
+    Graph g(n);
+    vector<long long> parent(n + 1, -1);
+    vector<long long> cycle;
+
+    for (long long i = 0; i < m; ++i) {
+        long long u, v;
+        cin >> u >> v;
+        g.addEdge(u, v);
+    }
+
+    bool cycleFound = false;
+    for (long long i = 1; i <= n; ++i) {
+        if (!cycleFound && g.DFS(i, parent, cycle)) {
+            cycleFound = true;
+            break;
+        }
+    }
+
+    if (cycleFound) {
+        cout << cycle.size() << endl;
+
+        for (long long i = cycle.size() - 1; i >= 0; --i) {
+            cout << cycle[i] << " ";
+        }
+        cout << endl;
+    } else {
+        cout << "IMPOSSIBLE" << endl;
+    }
+
+    return 0;
+}
