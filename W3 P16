@@ -1,0 +1,74 @@
+#include <iostream>
+#include <vector>
+#include <queue>
+#include <unordered_map>
+
+using namespace std;
+
+vector<int> CourseOrder(int n, int m, vector<pair<int, int>> &Prerequisites) {
+    
+    vector<vector<int>> adj_list(n+1);
+    vector<int> in_degree(n+1, 0);
+
+    for(auto &req : Prerequisites) {
+        int a = req.first, b = req.second;
+        adj_list[a].push_back(b);
+        in_degree[b]++;
+    }
+
+    queue<int> q;
+    for(int i=1; i<=n; i++) {
+
+        if(in_degree[i] == 0) {
+            q.push(i);
+        }
+    }
+
+    vector<int> order;
+
+    while(!q.empty()) {
+        int node = q.front();
+        q.pop();
+        order.push_back(node);
+
+        for(int neighbor : adj_list[node]) {
+            in_degree[neighbor]--;
+            if(in_degree[neighbor] == 0) {
+                q.push(neighbor);
+            }
+        }
+    }
+
+    if(order.size() == n) {
+        return order;
+    } 
+    else {
+        return {};
+    }
+
+}
+
+int main() {
+    int n, m;
+    cin >> n >> m;
+    
+    vector<pair<int, int>> prerequisites(m);
+    for (int i = 0; i < m; ++i) {
+        int a, b;
+        cin >> a >> b;
+        prerequisites[i] = {a, b};
+    }
+    
+    vector<int> order = CourseOrder(n, m, prerequisites);
+    
+    if (order.empty()) {
+        cout << "IMPOSSIBLE" << endl;
+    } else {
+        for (int course : order) {
+            cout << course << " ";
+        }
+        cout << endl;
+    }
+    
+    return 0;
+}
