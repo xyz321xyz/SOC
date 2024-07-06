@@ -1,0 +1,45 @@
+#include <iostream>
+#include <vector>
+#include <algorithm>
+
+using namespace std;
+
+int LongJumps(int n, vector<int> &game) {
+    
+    vector<int> score(n+1);
+    
+    for(int i=n; i>0; i--) {
+
+        if((i+game[i])<=n) {
+            score[i] = score[i+game[i]] + game[i];
+        }
+        else {
+            score[i] = game[i];
+        }
+    }
+
+    auto maxIt = max_element(score.begin(), score.end());
+
+    return *maxIt;
+
+}
+
+int main() {
+    
+    int t;
+    cin >> t;
+
+    for(int i=0; i<t; i++) {
+        int n;
+        cin >> n;
+
+        vector<int> game(n+1);
+
+        for(int j=1; j<=n; j++) {
+            cin >> game[j];
+        }
+
+        cout << LongJumps(n, game) << endl;
+    }
+
+}
