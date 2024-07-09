@@ -1,0 +1,45 @@
+#include <iostream>
+#include <vector>
+#include <algorithm>
+
+using namespace std;
+
+typedef long long ll;
+
+int main(){
+
+    int books, budget, h[100], s[100], k[100];
+    ll dp[100001];
+
+    cin >> books >> budget;
+
+    for(int i=0; i<books; i++) {
+        cin >> h[i];
+    }
+
+    for(int i=0; i<books; i++) {
+        cin >> s[i];
+    }
+
+    for(int i=0; i<books; i++) {
+        cin >> k[i];
+    }
+
+    fill(dp+1, dp+budget+1, -1);
+
+    for(int i = 0; i < books; i++){
+        for(int b = 1; k[i] > 0; b++){
+            int multiplier = min(b, k[i]);
+            k[i] -= b;
+            int price = multiplier * h[i];
+            int pages = multiplier * s[i];
+            for(int j = budget; j >= price; j--)
+                if(dp[j-price] != -1)
+                    dp[j] = max(dp[j], dp[j-price] + pages);
+        }
+    }
+
+    for(int i = 1; i <= budget; i++)
+        dp[i] = max(dp[i], dp[i-1]);
+    cout << dp[budget] << endl;
+}
