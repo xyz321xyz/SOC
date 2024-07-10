@@ -1,0 +1,45 @@
+#include <iostream>
+#include <vector>
+#include <algorithm>
+using namespace std;
+
+bool isValid(int k, const vector<pair<int, int>>& segments) {
+    int left = 0, right = 0;
+    for (const auto& segment : segments) {
+        left = max(left - k, segment.first);
+        right = min(right + k, segment.second);
+        if (left > right) {
+            return false;
+        }
+    }
+    return true;
+}
+
+void solve() {
+    int numberOfSegments;
+    cin >> numberOfSegments;
+    vector<pair<int, int>> segments(numberOfSegments);
+    for (int i = 0; i < numberOfSegments; ++i) {
+        cin >> segments[i].first >> segments[i].second;
+    }
+
+    int lower = -1, upper = 1000000000;
+    while (upper - lower > 1) {
+        int middle = (upper + lower) / 2;
+        if (isValid(middle, segments)) {
+            upper = middle;
+        } else {
+            lower = middle;
+        }
+    }
+    cout << upper << endl;
+}
+
+int main() {
+    int t;
+    cin >> t;
+    while (t--) {
+        solve();
+    }
+    return 0;
+}
