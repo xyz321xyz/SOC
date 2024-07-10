@@ -1,0 +1,26 @@
+#include <iostream>
+using namespace std;
+
+int main() {
+    int t;
+    cin >> t;
+
+    while (t > 0) {
+        t--;
+        int number1, number2;
+        cin >> number1 >> number2;
+
+        for (int bitPosition = 0; bitPosition < 30; bitPosition++) {
+            if ((number1 & (1 << bitPosition)) != (number2 & (1 << bitPosition))) {
+                long long powerOfTwo = 1;
+                for (int exponent = 0; exponent < bitPosition; exponent++) {
+                    powerOfTwo *= 2;
+                }
+                cout << powerOfTwo << endl;
+                break;
+            }
+        }
+    }
+
+    return 0;
+}
