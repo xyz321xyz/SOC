@@ -1,0 +1,64 @@
+#include <iostream>
+#include <vector>
+#include <algorithm>
+#include <climits>
+
+class SegmentTree {
+public:
+    SegmentTree(const std::vector<int>& data) {
+        n = data.size();
+        tree.resize(2 * n);
+        build(data);
+    }
+
+    void build(const std::vector<int>& data) {
+        for (int i = 0; i < n; ++i) {
+            tree[n + i] = data[i];
+        }
+        for (int i = n - 1; i > 0; --i) {
+            tree[i] = std::min(tree[2 * i], tree[2 * i + 1]);
+        }
+    }
+
+    int query(int l, int r) {
+        l += n;
+        r += n + 1; 
+        int minimum = INT_MAX;
+        while (l < r) {
+            if (l % 2 == 1) {
+                minimum = std::min(minimum, tree[l]);
+                l++;
+            }
+            if (r % 2 == 1) {
+                r--;
+                minimum = std::min(minimum, tree[r]);
+            }
+            l /= 2;
+            r /= 2;
+        }
+        return minimum;
+    }
+
+private:
+    int n;
+    std::vector<int> tree;
+};
+
+int main() {
+    int N, M;
+    std::cin >> N >> M;
+    std::vector<int> arr(N);
+    for (int i = 0; i < N; ++i) {
+        std::cin >> arr[i];
+    }
+
+    SegmentTree segTree(arr);
+
+    for (int i = 0; i < M; ++i) {
+        int l, r;
+        std::cin >> l >> r;
+        std::cout << segTree.query(l, r) << std::endl;
+    }
+
+    return 0;
+}
