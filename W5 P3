@@ -1,0 +1,55 @@
+class NumArray {
+public:
+    int n;
+    vector<int> segment;
+    
+    int Sum(int index, int start, int end, int l, int r){ 
+        
+        if(l<=start && r>=end){
+            return segment[index];
+        }
+        
+        if(start>r || end<l){
+            return 0;
+        }
+        
+        int mid = start + (end-start)/2;
+        int ans =Sum(index*2+1, start, mid, l, r) + 
+            Sum(index*2+2, mid+1, end, l, r); 
+        return ans;
+        
+    }
+    
+    int constructST(vector<int>&nums, int index, int start, int end){
+        if(start == end){ 
+            segment[index] = nums[start];
+          
+            return segment[index];
+        }
+        
+        
+        
+        int mid = start+(end-start)/2;
+        segment[index] = constructST(nums, 2*index+1, start, mid); 
+        segment[index] += constructST(nums, 2*index+2, mid+1, end); 
+        
+        return segment[index]; 
+    }
+    
+    NumArray(vector<int>& nums) {
+        n = nums.size();
+        
+        int x = ceil(log2(n));
+        int size = 2 * (int)(pow(2, x)) - 1; 
+        
+        segment.resize(size, 0);
+        
+        constructST(nums, 0, 0, n-1);
+        
+    }
+    
+    int sumRange(int left, int right) {
+        return Sum(0, 0, n-1, left, right);
+    }
+};
+
